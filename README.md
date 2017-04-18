@@ -24,7 +24,7 @@ val p = project {
     }
 }
 ```
-[View Example](https://github.com/ethauvin/kobalt-proprety-file/blob/master/example/kobalt/src/Build.kt)
+[View Example](https://github.com/ethauvin/kobalt-property-file/blob/master/example/kobalt/src/Build.kt)
 
 To invoke the `propertyFile` task:
 
