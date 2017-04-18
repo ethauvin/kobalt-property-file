@@ -17,7 +17,7 @@
 /dist
 /gen
 /gradle.properties
-/libs
+/lib
 /local.properties
 /out
 /proguard-project.txt
@@ -25,5 +25,7 @@
 /target
 /test-output
 ehthumbs.db
+example/version.properties
 kobaltBuild
+libs
 Thumbs.db
