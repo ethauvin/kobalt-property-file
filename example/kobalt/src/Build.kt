@@ -15,7 +15,6 @@ val p = project {
     version = "0.1"
 
     dependencies {
-        //        compile("com.beust:jcommander:1.68")
     }
 
     dependenciesTest {
@@ -42,11 +41,13 @@ val p = project {
         entry(key = "date.nextMonth", value = "0", type = Types.DATE, unit = Units.MONTH, operation = Operations.ADD)
         entry(key = "akey", value = "avalue")
         entry(key = "adate", type = Types.DATE, value = "now")
-        entry(key = "aint", type = Types.INT, default = "0", operation = Operations.ADD)
+        entry(key = "anint", type = Types.INT, default = "0", operation = Operations.ADD)
         entry(key = "formated.int", type = Types.INT, default = "0013", operation = Operations.ADD, pattern = "0000")
         entry(key = "formated.date", type = Types.DATE, value = "now", pattern = "DDD HH:mm")
-        entry(key = "formated.date-1", type = Types.DATE, default = "now", pattern="DDD", operation = Operations.SUBTRACT, value = "1")
-        entry(key = "formated.tomorrow", type = Types.DATE, default = "now", pattern="DDD", operation = Operations.ADD, value = "1")
-        entry(key = "progress", default = "", operation = Operations.ADD, value="1")
+        entry(key = "formated.date-1", type = Types.DATE, default = "now", pattern = "DDD",
+                operation = Operations.SUBTRACT, value = "1")
+        entry(key = "formated.tomorrow", type = Types.DATE, default = "now", pattern = "DDD",
+                operation = Operations.ADD, value = "1")
+        entry(key = "progress", default = "", operation = Operations.ADD, value = "1")
     }
 }
