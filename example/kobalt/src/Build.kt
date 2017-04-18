@@ -4,6 +4,8 @@ import com.beust.kobalt.plugin.application.*
 import com.beust.kobalt.plugin.kotlin.*
 import net.thauvin.erik.kobalt.plugin.propertyfile.*
 
+// ./kobaltw propertyFile
+
 val bs = buildScript {
     plugins(file("../libs/kobalt-property-file-0.1.0.jar"))
 }
@@ -39,6 +41,8 @@ val p = project {
         entry(key = "version.dateISO", value = "now", type = Types.DATE, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
         entry(key = "date.nextMonth", value = "now", type = Types.DATE)
         entry(key = "date.nextMonth", value = "0", type = Types.DATE, unit = Units.MONTH, operation = Operations.ADD)
+
+        // examples from: https://ant.apache.org/manual/Tasks/propertyfile.html
         entry(key = "akey", value = "avalue")
         entry(key = "adate", type = Types.DATE, value = "now")
         entry(key = "anint", type = Types.INT, default = "0", operation = Operations.ADD)
@@ -48,6 +52,6 @@ val p = project {
                 operation = Operations.SUBTRACT, value = "1")
         entry(key = "formated.tomorrow", type = Types.DATE, default = "now", pattern = "DDD",
                 operation = Operations.ADD, value = "1")
-        entry(key = "progress", default = "", operation = Operations.ADD, value = "1")
+        entry(key = "progress", default = "", operation = Operations.ADD, value = ".")
     }
 }

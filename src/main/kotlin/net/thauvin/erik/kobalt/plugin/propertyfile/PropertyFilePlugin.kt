@@ -264,7 +264,6 @@ enum class Operations {
     ADD, DELETE, SET, SUBTRACT
 }
 
-
 enum class Units {
     MILLISECOND, SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, YEAR
 }
