@@ -7,7 +7,8 @@ import net.thauvin.erik.kobalt.plugin.propertyfile.*
 // ./kobaltw propertyFile
 
 val bs = buildScript {
-    plugins(file("../libs/kobalt-property-file-0.1.0.jar"))
+    plugins(file("../kobaltBuild/libs/kobalt-property-file-0.9.0.jar"))
+    // plugins("net.thauvin.erik:kobalt-property-file:")
 }
 
 val p = project {
@@ -33,12 +34,20 @@ val p = project {
     }
 
     propertyFile {
+        // parameters
         file = "version.properties"
+        comment = "##Generated file - do not modify!"
+        // failOnWarning = true
+
+        // Version properties with patch increment
         entry(key = "version.major", value = "1")
         entry(key = "version.minor", value = "0")
         entry(key = "version.patch", value = "1", default = "-1", type = Types.INT, operation = Operations.ADD)
         entry(key = "version.date", value = "now", type = Types.DATE)
+        // ISO8601 date
         entry(key = "version.dateISO", value = "now", type = Types.DATE, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+
+        // Set date to now, then add a month
         entry(key = "date.nextMonth", value = "now", type = Types.DATE)
         entry(key = "date.nextMonth", value = "0", type = Types.DATE, unit = Units.MONTH, operation = Operations.ADD)
 

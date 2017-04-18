@@ -1,10 +1,15 @@
-
+import com.beust.kobalt.*
 import com.beust.kobalt.plugin.packaging.assemble
-import com.beust.kobalt.profile
-import com.beust.kobalt.project
+import com.beust.kobalt.plugin.publish.autoGitTag
+import com.beust.kobalt.plugin.publish.bintray
+import net.thauvin.erik.kobalt.plugin.versioneye.versionEye
+import org.apache.maven.model.*
 
-val semver = "0.1.0"
+val semver = "0.9.0"
 
+val bs = buildScript {
+    plugins("net.thauvin.erik:kobalt-versioneye:")
+}
 
 val dev by profile()
 val kobaltDependency = if (dev) "kobalt" else "kobalt-plugin-api"
@@ -14,6 +19,25 @@ val p = project {
     group = "net.thauvin.erik"
     artifactId = name
     version = semver
+
+    pom = Model().apply {
+        description = "PropertyFile plug-in for the Kobalt build system."
+        url = "https://github.com/ethauvin/kobalt-property-file"
+        licenses = listOf(License().apply {
+            name = "BSD 3-Clause"
+            url = "https://opensource.org/licenses/BSD-3-Clause"
+        })
+        scm = Scm().apply {
+            url = "https://github.com/ethauvin/kobalt-property-file"
+            connection = "https://github.com/ethauvin/kobalt-property-file.git"
+            developerConnection = "git@github.com:ethauvin/kobalt-property-file.git"
+        }
+        developers = listOf(Developer().apply {
+            id = "ethauvin"
+            name = "Erik C. Thauvin"
+            email = "erik@thauvin.net"
+        })
+    }
 
     dependencies {
         compile("com.beust:$kobaltDependency:")
@@ -29,5 +53,21 @@ val p = project {
         }
 
         mavenJars {}
+    }
+
+    autoGitTag {
+        enabled = true
+        message = "Version $version"
+    }
+
+    bintray {
+        publish = true
+        description = "Release version $version"
+        vcsTag = version
+    }
+
+    versionEye {
+        org = "Thauvin"
+        team = "Owners"
     }
 }
