@@ -50,7 +50,7 @@ Attribute   | Description                                                       
 `default`   | The initial value to set for the property if not already defined. For `Type.DATE`, the `now` keyword can be used. | Yes, unless `operation` is `Operations.DELETE`
 `type`      | Tread the value as `Types.INT`, `Types.DATE`, or `Types.STRING` (default).                                        | No
 `operation` | See [operations](#operations).                                                                                     | No
-`pattern`   | For `Types.INT` and `Types.DATE` only. If present, will parse the value as [DecimalFormat](https://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html) or [SimpleDateFormat](https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html) pattern, respectively. | No
+`pattern`   | For `Types.INT` and `Types.DATE` only. If present, will parse the value as [DecimalFormat](https://docs.oracle.com/javase/7/docs/api/java/text/DecimalFormat.html) or [SimpleDateFormat](https://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html) patterns, respectively. | No
 `unit`      | The unit value to be applied to `Operations.ADD` and `Operations.SUBTRACT` for `Types.DATE`. See [Units](#units). | No
 
 ## Operations
@@ -61,7 +61,7 @@ Operation             | Description
 :---------------------|:-------------------------------------------------------------------------
 `Operations.ADD`      | Adds a value to an entry.
 `Operations.DELETE`   | Deletes an entry.
-`Operations.SET`      | Sets the entry value (default).
+`Operations.SET`      | Sets the entry value. This is the default.
 `Operations.SUBTRACT` | Subtracts a value from the entry. For `Types.INT` and `Types.DATE` only.
 
 ## Units
