@@ -34,10 +34,11 @@ To invoke the `propertyFile` task:
 
 ## Parameters
 
-Attribute | Description                                             | Required
-:---------|:--------------------------------------------------------|:--------
-`file`    | The location of the property files to edit.             | Yes
-`comment` | Comment to be inserted at the top of the property file. | No
+Attribute       | Description                                             | Required
+:---------------|:--------------------------------------------------------|:--------
+`file`          | The location of the property files to edit.             | Yes
+`comment`       | Comment to be inserted at the top of the property file. | No
+`failOnWarning` | If set to `true`, the task will fail on any warnings.   | No
 
 ## Entry
 
@@ -94,4 +95,5 @@ Operations occur after the rules are evaluated.
 ## Differences with the [ant PropertyFile task](https://ant.apache.org/manual/Tasks/propertyfile.html)
 
 * The comments and layout of the original property file will not be preserved.
+* The `jdkproperties` parameter is not implemented.
 * The default `Types.DATE` pattern is `yyyy-MM-dd HH:mm` and not `yyyy/MM/dd HH:mm`.

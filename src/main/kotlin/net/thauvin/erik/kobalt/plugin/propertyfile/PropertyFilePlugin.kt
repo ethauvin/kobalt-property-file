@@ -83,7 +83,7 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
         configurationFor(project)?.let { config ->
             if (config.file.isBlank()) {
                 error("Please specify a property file name.")
-                return TaskResult()
+                return TaskResult(!config.failOnWarning)
             } else {
                 // Load properties
                 val p = Properties()
@@ -95,34 +95,35 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
                     }
                 }
 
-                var result = TaskResult()
+                var success = true
 
                 // Process entries
                 config.entries.forEach { entry ->
                     if (entry.key.isBlank()) {
                         error("An entry key must be specified.")
-                        return TaskResult()
+                        success = false
                     } else {
                         with(entry) {
                             if (value == null && default == null && operation != Operations.DELETE) {
                                 warn("An entry value or default must be specified: $key")
+                                success = false
                             } else if (type == Types.STRING && (operation == Operations.SUBTRACT)) {
                                 warn("Subtraction is not supported for String properties: $key")
+                                success = false
                             } else if (operation == Operations.DELETE) {
                                 p.remove(entry.key)
                             } else {
                                 when (type) {
-                                    Types.DATE -> result = processDate(p, entry)
-                                    Types.INT -> result = processInt(p, entry)
-                                    else -> result = processString(p, entry)
+                                    Types.DATE -> success = processDate(p, entry)
+                                    Types.INT -> success = processInt(p, entry)
+                                    else -> success = processString(p, entry)
                                 }
                             }
                         }
                     }
 
-                    // @TODO maybe just warn and keep on going?
-                    if (!result.success) {
-                        return result
+                    if (config.failOnWarning && !success) {
+                        return TaskResult(success)
                     }
                 }
 
@@ -136,15 +137,12 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
         return TaskResult()
     }
 
-    private fun processDate(p: Properties, entry: Entry): TaskResult {
+    private fun processDate(p: Properties, entry: Entry): Boolean {
+        var success = true
         val cal = Calendar.getInstance()
         val value = currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
 
-        val fmt = SimpleDateFormat(if (entry.pattern.isBlank()) {
-            "yyyy-MM-dd HH:mm"
-        } else {
-            entry.pattern
-        })
+        val fmt = SimpleDateFormat(if (entry.pattern.isBlank()) "yyyy-MM-dd HH:mm" else entry.pattern)
 
         if (value.equals("now", true) || value.isBlank()) {
             cal.time = Date()
@@ -153,6 +151,7 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
                 cal.time = fmt.parse(value)
             } catch (pe: ParseException) {
                 warn("Date parse exception for: ${entry.key}", pe)
+                success = false
             }
         }
 
@@ -166,6 +165,7 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
                 }
             } catch (nfe: NumberFormatException) {
                 warn("Non-integer value for: ${entry.key}")
+                success = false
             }
 
             cal.add(calendarFields.getOrDefault(entry.unit, Calendar.DATE), offset)
@@ -173,10 +173,11 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
 
         p.setProperty(entry.key, fmt.format(cal.time))
 
-        return TaskResult()
+        return success
     }
 
-    private fun processInt(p: Properties, entry: Entry): TaskResult {
+    private fun processInt(p: Properties, entry: Entry): Boolean {
+        var success = true
         var intValue: Int
         try {
             val fmt = DecimalFormat(entry.pattern)
@@ -199,28 +200,30 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
             p.setProperty(entry.key, fmt.format(intValue))
         } catch (nfe: NumberFormatException) {
             warn("Number format exception for: ${entry.key}", nfe)
+            success = false
         } catch (pe: ParseException) {
             warn("Number parsing exception for: ${entry.key}", pe)
+            success = false
         }
 
-        return TaskResult()
+        return success
     }
 
-    private fun processString(p: Properties, entry: Entry): TaskResult {
+    private fun processString(p: Properties, entry: Entry): Boolean {
         val value = currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
 
         if (entry.operation == Operations.SET) {
             p.setProperty(entry.key, value)
         } else if (entry.operation == Operations.ADD) {
             if (entry.value != null) {
-                p.setProperty(entry.key, value + entry.value)
+                p.setProperty(entry.key, "$value${entry.value}")
             }
         }
 
-        return TaskResult()
+        return true
     }
 
-    private fun currentValue(value: String?, newValue: String?, default: String?, operation: Enum<Operations>): String {
+    private fun currentValue(value: String?, newValue: String?, default: String?, operation: Operations): String {
         var result: String? = null
 
         if (operation == Operations.SET) {
@@ -273,7 +276,7 @@ data class Entry(
         var value: String? = null,
         var default: String? = null,
         var type: Types = Types.STRING,
-        var operation: Enum<Operations> = Operations.SET,
+        var operation: Operations = Operations.SET,
         var pattern: String = "",
         var unit: Units = Units.DAY)
 
@@ -281,6 +284,7 @@ data class Entry(
 class PropertyFileConfig {
     var file: String = ""
     var comment: String? = null
+    var failOnWarning: Boolean = false
     val entries = arrayListOf<Entry>()
 
     @Suppress("unused")
@@ -289,7 +293,7 @@ class PropertyFileConfig {
             value: String? = null,
             default: String? = null,
             type: Types = Types.STRING,
-            operation: Enum<Operations> = Operations.SET,
+            operation: Operations = Operations.SET,
             pattern: String = "",
             unit: Units = Units.DAY) {
         if (key.isNotEmpty()) entries.add(Entry(key, value, default, type, operation, pattern, unit))
