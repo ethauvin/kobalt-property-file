@@ -129,7 +129,7 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
             var offset = 0
 
             try {
-                offset = Integer.parseInt(value)
+                offset = entry.value!!.toInt()
                 if (entry.operation == Operations.SUBTRACT) {
                     offset *= -1
                 }
@@ -139,6 +139,8 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
 
             cal.add(calendarFields.getOrDefault(entry.unit, Calendar.DATE), offset)
         }
+
+        p.setProperty(entry.key, fmt.format(cal.time))
 
         return TaskResult()
     }
@@ -151,10 +153,16 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
 
             intValue = fmt.parse(if (value.isBlank()) "0" else value).toInt()
 
-            if (entry.operation == Operations.ADD) {
-                intValue += 1
-            } else if (entry.operation == Operations.SUBTRACT) {
-                intValue -= 1
+            if (entry.operation != Operations.SET) {
+                var opValue = 1
+                if (entry.value != null) {
+                    opValue = fmt.parse(entry.value).toInt()
+                }
+                if (entry.operation == Operations.ADD) {
+                    intValue += opValue
+                } else if (entry.operation == Operations.SUBTRACT) {
+                    intValue -= opValue
+                }
             }
 
             p.setProperty(entry.key, fmt.format(intValue))
@@ -173,7 +181,9 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
         if (entry.operation == Operations.SET) {
             p.setProperty(entry.key, value)
         } else if (entry.operation == Operations.ADD) {
-            p.setProperty(entry.key, value + p.getProperty(entry.key, ""))
+            if (entry.value != null) {
+                p.setProperty(entry.key, value + entry.value)
+            }
         }
 
         return TaskResult()
@@ -183,16 +193,25 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
         var result: String? = null
 
         if (operation == Operations.SET) {
-            if (newValue != null && default != null) {
+            if (newValue != null && default == null) {
                 result = newValue
             }
+            if (default != null) {
+                if (newValue == null && value != null) {
+                    result = value
+                }
 
-            if (newValue != null && default != null && value != null) {
-                result = value
-            }
+                if (newValue == null && value == null) {
+                    result = default
+                }
 
-            if (newValue != null && default != null && value == null) {
-                result = default
+                if (newValue != null && value != null) {
+                    result = newValue
+                }
+
+                if (newValue != null && value == null) {
+                    result = default
+                }
             }
         } else {
             result = value ?: default
@@ -223,7 +242,7 @@ data class Entry(
         var key: String = "",
         var value: String? = null,
         var default: String? = null,
-        var type: Enum<Types> = Types.STRING,
+        var type: Types = Types.STRING,
         var operation: Enum<Operations> = Operations.SET,
         var pattern: String = "",
         var unit: Units = Units.DAY)
@@ -231,7 +250,7 @@ data class Entry(
 @Directive
 class PropertyFileConfig {
     var file: String = ""
-    var comment: String = ""
+    var comment: String = "PropertyFile Plugin for Kobalt"
     val entries = arrayListOf<Entry>()
 
     @Suppress("unused")
@@ -239,7 +258,7 @@ class PropertyFileConfig {
             key: String = "",
             value: String? = null,
             default: String? = null,
-            type: Enum<Types> = Types.STRING,
+            type: Types = Types.STRING,
             operation: Enum<Operations> = Operations.SET,
             pattern: String = "",
             unit: Units = Units.DAY) {
@@ -249,7 +268,7 @@ class PropertyFileConfig {
 
 @Suppress("unused")
 @Directive
-fun Project.propertyfile(init: PropertyFileConfig.() -> Unit) {
+fun Project.propertyFile(init: PropertyFileConfig.() -> Unit) {
     PropertyFileConfig().let { config ->
         config.init()
         (Plugins.findPlugin(PropertyFilePlugin.NAME) as PropertyFilePlugin).addConfiguration(this, config)
