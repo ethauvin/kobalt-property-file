@@ -1,0 +1,6 @@
+<kobalt-plugin>
+    <name>Maven Local Repository</name>
+    <plugin-actors>
+        <class-name>net.thauvin.erik.kobalt.plugin.propertyfile.PropertyFilePlugin</class-name>
+    </plugin-actors>
+</kobalt-plugin>
