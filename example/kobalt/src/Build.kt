@@ -8,7 +8,7 @@ import net.thauvin.erik.kobalt.plugin.propertyfile.*
 
 val bs = buildScript {
     plugins(file("../kobaltBuild/libs/kobalt-property-file-0.9.0.jar"))
-    // plugins("net.thauvin.erik:kobalt-property-file:")
+    //plugins("net.thauvin.erik:kobalt-property-file:")
 }
 
 val p = project {
@@ -37,7 +37,9 @@ val p = project {
         // parameters
         file = "version.properties"
         comment = "##Generated file - do not modify!"
-        // failOnWarning = true
+
+        //failOnWarning = true
+        //entry(key = "version.fail", value = "a", type = Types.INT)
 
         // Version properties with patch increment
         entry(key = "version.major", value = "1")
@@ -51,7 +53,7 @@ val p = project {
         entry(key = "date.nextMonth", value = "now", type = Types.DATE)
         entry(key = "date.nextMonth", value = "0", type = Types.DATE, unit = Units.MONTH, operation = Operations.ADD)
 
-        // examples from: https://ant.apache.org/manual/Tasks/propertyfile.html
+        // Examples from: https://ant.apache.org/manual/Tasks/propertyfile.html
         entry(key = "akey", value = "avalue")
         entry(key = "adate", type = Types.DATE, value = "now")
         entry(key = "anint", type = Types.INT, default = "0", operation = Operations.ADD)

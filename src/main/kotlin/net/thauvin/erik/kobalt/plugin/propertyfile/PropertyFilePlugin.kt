@@ -43,23 +43,12 @@ import com.google.inject.Singleton
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.text.*
 import java.util.*
 
 @Singleton
 class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<PropertyFileConfig>,
                                              val taskContributor: TaskContributor) :
         BasePlugin(), ITaskContributor, IConfigActor<PropertyFileConfig> by configActor {
-    private val calendarFields = mapOf(
-            Units.MILLISECOND to Calendar.MILLISECOND,
-            Units.SECOND to Calendar.SECOND,
-            Units.MINUTE to Calendar.MINUTE,
-            Units.HOUR to Calendar.HOUR_OF_DAY,
-            Units.DAY to Calendar.DATE,
-            Units.WEEK to Calendar.WEEK_OF_YEAR,
-            Units.MONTH to Calendar.MONTH,
-            Units.YEAR to Calendar.YEAR
-    )
 
     // ITaskContributor
     override fun tasksFor(project: Project, context: KobaltContext): List<DynamicTask> {
@@ -114,9 +103,9 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
                                 p.remove(entry.key)
                             } else {
                                 when (type) {
-                                    Types.DATE -> success = processDate(p, entry)
-                                    Types.INT -> success = processInt(p, entry)
-                                    else -> success = processString(p, entry)
+                                    Types.DATE -> success = Utils.processDate(p, entry)
+                                    Types.INT -> success = Utils.processInt(p, entry)
+                                    else -> success = Utils.processString(p, entry)
                                 }
                             }
                         }
@@ -135,127 +124,6 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
         }
 
         return TaskResult()
-    }
-
-    private fun processDate(p: Properties, entry: Entry): Boolean {
-        var success = true
-        val cal = Calendar.getInstance()
-        val value = currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
-
-        val fmt = SimpleDateFormat(if (entry.pattern.isBlank()) "yyyy-MM-dd HH:mm" else entry.pattern)
-
-        if (value.equals("now", true) || value.isBlank()) {
-            cal.time = Date()
-        } else {
-            try {
-                cal.time = fmt.parse(value)
-            } catch (pe: ParseException) {
-                warn("Date parse exception for: ${entry.key}", pe)
-                success = false
-            }
-        }
-
-        if (entry.operation != Operations.SET) {
-            var offset = 0
-
-            try {
-                offset = entry.value!!.toInt()
-                if (entry.operation == Operations.SUBTRACT) {
-                    offset *= -1
-                }
-            } catch (nfe: NumberFormatException) {
-                warn("Non-integer value for: ${entry.key}")
-                success = false
-            }
-
-            cal.add(calendarFields.getOrDefault(entry.unit, Calendar.DATE), offset)
-        }
-
-        p.setProperty(entry.key, fmt.format(cal.time))
-
-        return success
-    }
-
-    private fun processInt(p: Properties, entry: Entry): Boolean {
-        var success = true
-        var intValue: Int
-        try {
-            val fmt = DecimalFormat(entry.pattern)
-            val value = currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
-
-            intValue = fmt.parse(if (value.isBlank()) "0" else value).toInt()
-
-            if (entry.operation != Operations.SET) {
-                var opValue = 1
-                if (entry.value != null) {
-                    opValue = fmt.parse(entry.value).toInt()
-                }
-                if (entry.operation == Operations.ADD) {
-                    intValue += opValue
-                } else if (entry.operation == Operations.SUBTRACT) {
-                    intValue -= opValue
-                }
-            }
-
-            p.setProperty(entry.key, fmt.format(intValue))
-        } catch (nfe: NumberFormatException) {
-            warn("Number format exception for: ${entry.key}", nfe)
-            success = false
-        } catch (pe: ParseException) {
-            warn("Number parsing exception for: ${entry.key}", pe)
-            success = false
-        }
-
-        return success
-    }
-
-    private fun processString(p: Properties, entry: Entry): Boolean {
-        val value = currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
-
-        if (entry.operation == Operations.SET) {
-            p.setProperty(entry.key, value)
-        } else if (entry.operation == Operations.ADD) {
-            if (entry.value != null) {
-                p.setProperty(entry.key, "$value${entry.value}")
-            }
-        }
-
-        return true
-    }
-
-    private fun currentValue(value: String?, newValue: String?, default: String?, operation: Operations): String {
-        var result: String? = null
-
-        if (operation == Operations.SET) {
-            if (newValue != null && default == null) {
-                result = newValue
-            }
-            if (default != null) {
-                if (newValue == null && value != null) {
-                    result = value
-                }
-
-                if (newValue == null && value == null) {
-                    result = default
-                }
-
-                if (newValue != null && value != null) {
-                    result = newValue
-                }
-
-                if (newValue != null && value == null) {
-                    result = default
-                }
-            }
-        } else {
-            result = value ?: default
-        }
-
-        if (result == null) {
-            result = ""
-        }
-
-        return result
     }
 }
 
@@ -296,7 +164,7 @@ class PropertyFileConfig {
             operation: Operations = Operations.SET,
             pattern: String = "",
             unit: Units = Units.DAY) {
-        if (key.isNotEmpty()) entries.add(Entry(key, value, default, type, operation, pattern, unit))
+        entries.add(Entry(key, value, default, type, operation, pattern, unit))
     }
 }
 
