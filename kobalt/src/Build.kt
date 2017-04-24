@@ -8,7 +8,8 @@ import org.apache.maven.model.*
 val semver = "0.9.0"
 
 val bs = buildScript {
-    plugins("net.thauvin.erik:kobalt-versioneye:")
+    repos(file("k:/maven/repository"))
+    plugins("net.thauvin.erik:kobalt-versioneye:", "net.thauvin.erik:kobalt-maven-local:")
 }
 
 val dev by profile()
@@ -52,7 +53,9 @@ val p = project {
             fatJar = true
         }
 
-        mavenJars {}
+        mavenJars {
+            fatJar = true
+        }
     }
 
     autoGitTag {

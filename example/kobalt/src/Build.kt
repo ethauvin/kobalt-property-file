@@ -7,8 +7,8 @@ import net.thauvin.erik.kobalt.plugin.propertyfile.*
 // ./kobaltw propertyFile
 
 val bs = buildScript {
-    plugins(file("../kobaltBuild/libs/kobalt-property-file-0.9.0.jar"))
-    //plugins("net.thauvin.erik:kobalt-property-file:")
+    //repos(file("K:/maven/repository"))
+    plugins("net.thauvin.erik:kobalt-property-file:")
 }
 
 val p = project {
@@ -39,7 +39,7 @@ val p = project {
         comment = "##Generated file - do not modify!"
 
         //failOnWarning = true
-        //entry(key = "version.fail", value = "a", type = Types.INT)
+        entry(key = "version.fail", value = "a", type = Types.INT)
 
         // Version properties with patch increment
         entry(key = "version.major", value = "1")

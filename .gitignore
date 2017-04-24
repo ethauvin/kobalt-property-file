@@ -4,6 +4,7 @@
 **/.idea/tasks.xml
 **/.idea/workspace.xml
 *.iws
+*.sublime-*
 .classpath
 .DS_Store
 .gradle
