@@ -35,13 +35,6 @@ import com.beust.kobalt.misc.warn
 import java.text.*
 import java.util.*
 
-/**
- * The <code>Utils</code> class.
- *
- * @author <a href="mailto:erik@thauvin.net" target="_blank">Erik C. Thauvin</a>
- * @created 2017-04-18
- * @since 1.0
- */
 class Utils {
     companion object {
         private val calendarFields = mapOf(
@@ -68,7 +61,7 @@ class Utils {
                 try {
                     cal.time = fmt.parse(value)
                 } catch (pe: ParseException) {
-                    warn("Date parse exception for: ${entry.key}", pe)
+                    warn("Date parse exception for: ${entry.key} --> ${pe.message}", pe)
                     success = false
                 }
             }
@@ -82,7 +75,7 @@ class Utils {
                         offset *= -1
                     }
                 } catch (nfe: NumberFormatException) {
-                    warn("Non-integer value for: ${entry.key}")
+                    warn("Non-integer value for: ${entry.key} --> ${nfe.message}", nfe)
                     success = false
                 }
 
@@ -117,10 +110,10 @@ class Utils {
 
                 p.setProperty(entry.key, fmt.format(intValue))
             } catch (nfe: NumberFormatException) {
-                warn("Number format exception for: ${entry.key}", nfe)
+                warn("Number format exception for: ${entry.key} --> ${nfe.message}", nfe)
                 success = false
             } catch (pe: ParseException) {
-                warn("Number parsing exception for: ${entry.key}", pe)
+                warn("Number parsing exception for: ${entry.key} --> ${pe.message}", pe)
                 success = false
             }
 
