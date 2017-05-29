@@ -12,6 +12,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="Kobalt: org.yaml:snakeyaml:jar:1.17">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.kobalt/cache/org/yaml/snakeyaml/1.17/snakeyaml-1.17.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module-library">
       <library name="Kobalt: org.opentest4j:opentest4j:jar:1.0.0-M2">
         <CLASSES>
@@ -373,15 +382,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Kobalt: org.jetbrains:annotations:jar:13.0">
-        <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/cache/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="Kobalt: org.apache.commons:commons-compress:jar:1.13">
         <CLASSES>
           <root url="jar://$USER_HOME$/.kobalt/cache/org/apache/commons/commons-compress/1.13/commons-compress-1.13.jar!/" />
@@ -607,27 +607,9 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Kobalt: org.jetbrains.kotlin:kotlin-stdlib:jar:1.1.1">
-        <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/cache/org/jetbrains/kotlin/kotlin-stdlib/1.1.1/kotlin-stdlib-1.1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="Kobalt: com.beust:kobalt-plugin-api:jar:(0,]">
         <CLASSES>
           <root url="jar://$USER_HOME$/.kobalt/cache/com/beust/kobalt-plugin-api/1.0.68/kobalt-plugin-api-1.0.68.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="TEST">
-      <library name="Kobalt: org.testng:testng:jar:6.11">
-        <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/cache/org/testng/testng/6.11/testng-6.11.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -643,9 +625,27 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="TEST">
-      <library name="Kobalt: org.yaml:snakeyaml:jar:1.17">
+      <library name="Kobalt: org.testng:testng:jar:6.11">
         <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/cache/org/yaml/snakeyaml/1.17/snakeyaml-1.17.jar!/" />
+          <root url="jar://$USER_HOME$/.kobalt/cache/org/testng/testng/6.11/testng-6.11.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Kobalt: org.jetbrains.kotlin:kotlin-stdlib:jar:1.1.2-4">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.kobalt/cache/org/jetbrains/kotlin/kotlin-stdlib/1.1.2-4/kotlin-stdlib-1.1.2-4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Kobalt: org.jetbrains:annotations:jar:13.0">
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.kobalt/cache/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
