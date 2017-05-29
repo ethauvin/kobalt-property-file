@@ -1,14 +1,18 @@
-import com.beust.kobalt.*
+import com.beust.kobalt.buildScript
+import com.beust.kobalt.localMaven
 import com.beust.kobalt.plugin.packaging.assemble
 import com.beust.kobalt.plugin.publish.autoGitTag
 import com.beust.kobalt.plugin.publish.bintray
+import com.beust.kobalt.profile
+import com.beust.kobalt.project
 import net.thauvin.erik.kobalt.plugin.versioneye.versionEye
-import org.apache.maven.model.*
-
-val semver = "0.9.0"
+import org.apache.maven.model.Developer
+import org.apache.maven.model.License
+import org.apache.maven.model.Model
+import org.apache.maven.model.Scm
 
 val bs = buildScript {
-    repos(file("k:/maven/repository"))
+    repos(localMaven())
     plugins("net.thauvin.erik:kobalt-versioneye:", "net.thauvin.erik:kobalt-maven-local:")
 }
 
@@ -19,7 +23,7 @@ val p = project {
     name = "kobalt-property-file"
     group = "net.thauvin.erik"
     artifactId = name
-    version = semver
+    version = "0.9.1"
 
     pom = Model().apply {
         description = "PropertyFile plug-in for the Kobalt build system."
@@ -41,7 +45,8 @@ val p = project {
     }
 
     dependencies {
-        compile("com.beust:$kobaltDependency:")
+        compileOnly("com.beust:$kobaltDependency:")
+        compile("org.jetbrains.kotlin:kotlin-stdlib:1.1.2-4")
     }
 
     dependenciesTest {

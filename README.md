@@ -8,7 +8,7 @@ The PropertyFile plug-in provides an optional task for editing [property files](
 import net.thauvin.erik.kobalt.plugin.propertyfile.*
 
 val bs = buildScript {
-    plugins("net.thauvin.erik:kobalt-property-file:")
+    plugins("net.thauvin.erik:kobalt-property-file:0.9.1")
 }
 
 val p = project {
@@ -91,6 +91,43 @@ The rules used when setting a property value are:
 * If `value` and `default` are both specified and the property did not exist, the property is set to `default`.
 
 Operations occur after the rules are evaluated.
+
+
+## taskName
+
+Additionally, you can specify a task name to easily identify multiple `propertyFile` tasks.
+
+```kotlin
+propertyFile {
+    taskName = "updateMinor"
+    file = "version.properties"
+    entry(key = "product.build.minor", type = Types.INT, operation = Operations.ADD)
+}
+
+propertyFile {
+    taskName = "updatePatch"
+    file = "version.properties"
+    entry(key = "product.build.patch", type = Types.INT, operation = Operations.ADD)
+}
+```
+
+```sh
+./kobaltw updateMinor
+./kobaltw updatePatch
+```
+
+## dependsOn
+
+
+By default the `propertyFile` task has no dependencies, use the `dependsOn` parameter to change the dependencies:
+
+```kotlin
+propertyFile {
+    dependsOn = listOf("assemble", "run")
+    file = "version.properties"
+    entry(key = "product.build.date" , type = Types.DATE, value = "now")
+}
+```
 
 ## Differences with the [ant PropertyFile task](https://ant.apache.org/manual/Tasks/propertyfile.html)
 

@@ -35,7 +35,7 @@ import com.beust.kobalt.misc.warn
 import java.text.*
 import java.util.*
 
-class Utils {
+class Utils private constructor() {
     companion object {
         private val calendarFields = mapOf(
                 Units.MILLISECOND to Calendar.MILLISECOND,

@@ -4,11 +4,11 @@ import com.beust.kobalt.plugin.application.*
 import com.beust.kobalt.plugin.kotlin.*
 import net.thauvin.erik.kobalt.plugin.propertyfile.*
 
-// ./kobaltw propertyFile
+// ./kobaltw propertyFile antExamples
 
 val bs = buildScript {
-    //repos(file("K:/maven/repository"))
-    plugins("net.thauvin.erik:kobalt-property-file:")
+    repos(localMaven())
+    plugins("net.thauvin.erik:kobalt-property-file:0.9.1")
 }
 
 val p = project {
@@ -52,6 +52,17 @@ val p = project {
         // Set date to now, then add a month
         entry(key = "date.nextMonth", value = "now", type = Types.DATE)
         entry(key = "date.nextMonth", value = "0", type = Types.DATE, unit = Units.MONTH, operation = Operations.ADD)
+    }
+
+    propertyFile {
+        // task name
+        taskName = "antExamples"
+
+        // dependencies
+        dependsOn = listOf("run")
+
+        // parameters
+        file = "version.properties"
 
         // Examples from: https://ant.apache.org/manual/Tasks/propertyfile.html
         entry(key = "akey", value = "avalue")

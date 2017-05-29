@@ -35,7 +35,6 @@ import com.beust.kobalt.Plugins
 import com.beust.kobalt.TaskResult
 import com.beust.kobalt.api.*
 import com.beust.kobalt.api.annotation.Directive
-import com.beust.kobalt.api.annotation.Task
 import com.beust.kobalt.misc.error
 import com.beust.kobalt.misc.warn
 import com.google.inject.Inject
@@ -46,9 +45,9 @@ import java.nio.file.Paths
 import java.util.*
 
 @Singleton
-class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<PropertyFileConfig>,
-                                             val taskContributor: TaskContributor) :
-        BasePlugin(), ITaskContributor, IConfigActor<PropertyFileConfig> by configActor {
+class PropertyFilePlugin @Inject constructor(val taskContributor: TaskContributor,
+                                             val configActor: ConfigsActor<PropertyFileConfig>) :
+        BasePlugin(), ITaskContributor, IConfigsActor<PropertyFileConfig> by configActor {
 
     // ITaskContributor
     override fun tasksFor(project: Project, context: KobaltContext): List<DynamicTask> {
@@ -62,64 +61,70 @@ class PropertyFilePlugin @Inject constructor(val configActor: ConfigActor<Proper
     override val name = NAME
 
     override fun apply(project: Project, context: KobaltContext) {
-        super.apply(project, context)
-        taskContributor.addVariantTasks(this, project, context, NAME, group = "other",
-                runTask = { propertyFile(project) })
+        configurationFor(project)?.let { configs ->
+            configs.forEach { config ->
+                taskManager.addTask(this, project, config.taskName,
+                        description = "Edit a property file.",
+                        group = "Other",
+                        dependsOn = config.dependsOn,
+                        task = { propertyFile(config) })
+                taskContributor.addVariantTasks(this, project, context, config.taskName,
+                        dependsOn = config.dependsOn,
+                        runTask = { propertyFile(config) })
+            }
+        }
     }
 
-    @Task(name = "propertyFile", description = "Edit a property file.")
-    fun propertyFile(project: Project): TaskResult {
-        configurationFor(project)?.let { config ->
-            if (config.file.isBlank()) {
-                error("Please specify a property file name.")
-                return TaskResult(!config.failOnWarning)
-            } else {
-                // Load properties
-                val p = Properties()
-                Paths.get(config.file).let { path ->
-                    if (path.toFile().exists()) {
-                        Files.newInputStream(path).use {
-                            p.load(it)
-                        }
+    fun propertyFile(config: PropertyFileConfig): TaskResult {
+        if (config.file.isBlank()) {
+            error("Please specify a property file name.")
+            return TaskResult(!config.failOnWarning)
+        } else {
+            // Load properties
+            val p = Properties()
+            Paths.get(config.file).let { path ->
+                if (path.toFile().exists()) {
+                    Files.newInputStream(path).use {
+                        p.load(it)
                     }
                 }
+            }
 
-                var success = true
+            var success = true
 
-                // Process entries
-                config.entries.forEach { entry ->
-                    if (entry.key.isBlank()) {
-                        error("An entry key must be specified.")
-                        success = false
-                    } else {
-                        with(entry) {
-                            if (value == null && default == null && operation != Operations.DELETE) {
-                                warn("An entry value or default must be specified: $key")
-                                success = false
-                            } else if (type == Types.STRING && (operation == Operations.SUBTRACT)) {
-                                warn("Subtraction is not supported for String properties: $key")
-                                success = false
-                            } else if (operation == Operations.DELETE) {
-                                p.remove(entry.key)
-                            } else {
-                                when (type) {
-                                    Types.DATE -> success = Utils.processDate(p, entry)
-                                    Types.INT -> success = Utils.processInt(p, entry)
-                                    else -> success = Utils.processString(p, entry)
-                                }
+            // Process entries
+            config.entries.forEach { entry ->
+                if (entry.key.isBlank()) {
+                    error("An entry key must be specified.")
+                    success = false
+                } else {
+                    with(entry) {
+                        if (value == null && default == null && operation != Operations.DELETE) {
+                            warn("An entry value or default must be specified: $key")
+                            success = false
+                        } else if (type == Types.STRING && (operation == Operations.SUBTRACT)) {
+                            warn("Subtraction is not supported for String properties: $key")
+                            success = false
+                        } else if (operation == Operations.DELETE) {
+                            p.remove(entry.key)
+                        } else {
+                            when (type) {
+                                Types.DATE -> success = Utils.processDate(p, entry)
+                                Types.INT -> success = Utils.processInt(p, entry)
+                                else -> success = Utils.processString(p, entry)
                             }
                         }
                     }
-
-                    if (config.failOnWarning && !success) {
-                        return TaskResult(success)
-                    }
                 }
 
-                // Save properties
-                FileOutputStream(config.file).use { output ->
-                    p.store(output, config.comment)
+                if (config.failOnWarning && !success) {
+                    return TaskResult(success)
                 }
+            }
+
+            // Save properties
+            FileOutputStream(config.file).use { output ->
+                p.store(output, config.comment)
             }
         }
 
@@ -150,10 +155,12 @@ data class Entry(
 
 @Directive
 class PropertyFileConfig {
+    var taskName: String = "propertyFile"
     var file: String = ""
     var comment: String? = null
     var failOnWarning: Boolean = false
     val entries = arrayListOf<Entry>()
+    var dependsOn = listOf<String>()
 
     @Suppress("unused")
     fun entry(
