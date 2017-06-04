@@ -1,5 +1,5 @@
 /*
- * UtilsTest.kt
+ * PropertyFileUtilsTest.kt
  *
  * Copyright (c) 2017, Erik C. Thauvin (erik@thauvin.net)
  * All rights reserved.
@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Test
-class UtilsTest {
+class PropertyFileUtilsTest {
     val p = Properties()
 
     @Test
@@ -51,35 +51,35 @@ class UtilsTest {
         // If only value is specified, the property is set to it regardless of its previous value.
         prev = "previous"
         value = "value"
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), value,
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), value,
                 "currentValue($prev,$value,$default,$operation)")
 
         // If only default is specified and the property previously existed, it is unchanged.
         prev = "previous"
         value = null
         default = "default"
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), prev,
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), prev,
                 "currentValue($prev,$value,$default,$operation)")
 
         // If only default is specified and the property did not exist, the property is set to default.
         prev = null
         value = null
         default = "default"
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), default,
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), default,
                 "currentValue($prev,$value,$default,$operation)")
 
         // If value and default are both specified and the property previously existed, the property is set to value.
         prev = "previous"
         value ="value"
         default = "default"
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), value,
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), value,
                 "currentValue($prev,$value,$default,$operation)")
 
         // If value and default are both specified and the property did not exist, the property is set to default.
         prev = null
         value = "value"
         default ="default"
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), default,
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), default,
                 "currentValue($prev,$value,$default,$operation)")
 
         // ADD
@@ -88,31 +88,31 @@ class UtilsTest {
         prev = null
         value = "value"
         default = "default"
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), default,
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), default,
                 "currentValue($prev,$value,$default,$operation)")
 
         prev = "prev"
         value = "value"
         default = null
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), prev,
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), prev,
                 "currentValue($prev,$value,$default,$operation)")
 
         prev = null
         value = "value"
         default = null
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), "",
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), "",
                 "currentValue($prev,$value,$default,$operation)")
 
         prev = null
         value = "value"
         default = "default"
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), default,
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), default,
                 "currentValue($prev,$value,$default,$operation)")
 
         prev = null
         value = null
         default = null
-        Assert.assertEquals(Utils.currentValue(prev, value, default, operation), "",
+        Assert.assertEquals(PropertyFileUtils.currentValue(prev, value, default, operation), "",
                 "currentValue($prev,$value,$default,$operation)")
     }
 
@@ -123,13 +123,13 @@ class UtilsTest {
         entry.key = "version.major"
         entry.value = "1"
 
-        Utils.processString(p, entry)
+        PropertyFileUtils.processString(p, entry)
         Assert.assertEquals(entry.value, p.getProperty(entry.key), "processString(${entry.key}, ${entry.value})")
 
         entry.key = "version.minor"
         entry.value = "0"
 
-        Utils.processString(p, entry)
+        PropertyFileUtils.processString(p, entry)
         Assert.assertEquals(entry.value, p.getProperty(entry.key), "processString(${entry.key}, ${entry.value})")
     }
 
@@ -141,38 +141,38 @@ class UtilsTest {
         entry.key = "version.patch"
 
         entry.value = "a"
-        Assert.assertFalse(Utils.processInt(p, entry), "parsetInt(${entry.key}, a)")
+        Assert.assertFalse(PropertyFileUtils.processInt(p, entry), "parsetInt(${entry.key}, a)")
 
         // ADD
         entry.operation = Operations.ADD
 
         entry.value = "1"
         entry.default = "-1"
-        Utils.processInt(p, entry)
+        PropertyFileUtils.processInt(p, entry)
         Assert.assertEquals("0", p.getProperty(entry.key), "processInt(${entry.key}, 0)")
 
         entry.key = "anint"
         entry.value = null
         entry.default = "0"
-        Utils.processInt(p, entry)
+        PropertyFileUtils.processInt(p, entry)
         Assert.assertEquals("1", p.getProperty(entry.key), "processInt(${entry.key}, 1)")
-        Utils.processInt(p, entry)
+        PropertyFileUtils.processInt(p, entry)
         Assert.assertEquals("2", p.getProperty(entry.key), "processInt(${entry.key}, 2)")
 
         entry.key = "formated.int"
         entry.value = null
         entry.default = "0013"
         entry.pattern = "0000"
-        Utils.processInt(p, entry)
+        PropertyFileUtils.processInt(p, entry)
         Assert.assertEquals("0014", p.getProperty(entry.key), "processInt(${entry.key}, 0014)")
-        Utils.processInt(p, entry)
+        PropertyFileUtils.processInt(p, entry)
         Assert.assertEquals("0015", p.getProperty(entry.key), "processInt(${entry.key}, 0015)")
 
         entry.key = "formated.int"
         entry.value = "2"
         entry.default = "0013"
         entry.pattern = "0000"
-        Utils.processInt(p, entry)
+        PropertyFileUtils.processInt(p, entry)
         Assert.assertEquals("0017", p.getProperty(entry.key), "processInt(${entry.key}, 0017)")
 
         // SUBTRACT
@@ -180,7 +180,7 @@ class UtilsTest {
         entry.value = null
         entry.default = "0013"
         entry.pattern = "0000"
-        Utils.processInt(p, entry)
+        PropertyFileUtils.processInt(p, entry)
         Assert.assertEquals("0016", p.getProperty(entry.key), "processInt(${entry.key}, 0016)")
 
     }
@@ -195,36 +195,36 @@ class UtilsTest {
         val day = SimpleDateFormat(entry.pattern).format(Date()).toInt()
 
         entry.value = "a"
-        Assert.assertFalse(Utils.processDate(p, entry), "processDate(${entry.key}, a)")
+        Assert.assertFalse(PropertyFileUtils.processDate(p, entry), "processDate(${entry.key}, a)")
 
         entry.value = "99"
-        Utils.processDate(p, entry)
+        PropertyFileUtils.processDate(p, entry)
         Assert.assertEquals("99", p.getProperty(entry.key), "processDate(${entry.key}, 99)")
 
         entry.value = "now"
-        Utils.processDate(p, entry)
+        PropertyFileUtils.processDate(p, entry)
         Assert.assertEquals("$day", p.getProperty(entry.key), "processDate(${entry.key}, now)")
 
         // ADD
         entry.operation = Operations.ADD
 
         entry.value = "1"
-        Utils.processDate(p, entry)
+        PropertyFileUtils.processDate(p, entry)
         Assert.assertEquals("${day+1}", p.getProperty(entry.key), "processDate(${entry.key}, now+1)")
 
         entry.value = "2"
-        Utils.processDate(p, entry)
+        PropertyFileUtils.processDate(p, entry)
         Assert.assertEquals("${day+3}", p.getProperty(entry.key), "processDate(${entry.key}, now+3)")
 
         // SUBTRACT
         entry.operation = Operations.SUBTRACT
         entry.value = "3"
-        Utils.processDate(p, entry)
+        PropertyFileUtils.processDate(p, entry)
         Assert.assertEquals("$day", p.getProperty(entry.key), "processDate(${entry.key}, now-3)")
 
         entry.operation = Operations.SUBTRACT
         entry.value = "2"
-        Utils.processDate(p, entry)
+        PropertyFileUtils.processDate(p, entry)
         Assert.assertEquals("${day-2}", p.getProperty(entry.key), "processDate(${entry.key}, now-2)")
     }
 }

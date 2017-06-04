@@ -109,9 +109,9 @@ class PropertyFilePlugin @Inject constructor(val taskContributor: TaskContributo
                             p.remove(entry.key)
                         } else {
                             when (type) {
-                                Types.DATE -> success = Utils.processDate(p, entry)
-                                Types.INT -> success = Utils.processInt(p, entry)
-                                else -> success = Utils.processString(p, entry)
+                                Types.DATE -> success = PropertyFileUtils.processDate(p, entry)
+                                Types.INT -> success = PropertyFileUtils.processInt(p, entry)
+                                else -> success = PropertyFileUtils.processString(p, entry)
                             }
                         }
                     }

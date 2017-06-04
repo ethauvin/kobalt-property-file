@@ -65,6 +65,7 @@ val p = project {
 
     autoGitTag {
         enabled = true
+        push = false
         message = "Version $version"
     }
 

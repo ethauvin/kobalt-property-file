@@ -1,5 +1,5 @@
 /*
- * Utils.kt
+ * PropertyFileUtils.kt
  *
  * Copyright (c) 2017, Erik C. Thauvin (erik@thauvin.net)
  * All rights reserved.
@@ -32,10 +32,12 @@
 package net.thauvin.erik.kobalt.plugin.propertyfile
 
 import com.beust.kobalt.misc.warn
-import java.text.*
+import java.text.DecimalFormat
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
-class Utils private constructor() {
+class PropertyFileUtils private constructor() {
     companion object {
         private val calendarFields = mapOf(
                 Units.MILLISECOND to Calendar.MILLISECOND,
@@ -51,7 +53,7 @@ class Utils private constructor() {
         fun processDate(p: Properties, entry: Entry): Boolean {
             var success = true
             val cal = Calendar.getInstance()
-            val value = Utils.currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
+            val value = PropertyFileUtils.currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
 
             val fmt = SimpleDateFormat(if (entry.pattern.isBlank()) "yyyy-MM-dd HH:mm" else entry.pattern)
 
@@ -92,7 +94,7 @@ class Utils private constructor() {
             var intValue: Int
             try {
                 val fmt = DecimalFormat(entry.pattern)
-                val value = Utils.currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
+                val value = PropertyFileUtils.currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
 
                 intValue = fmt.parse(if (value.isBlank()) "0" else value).toInt()
 
@@ -121,7 +123,7 @@ class Utils private constructor() {
         }
 
         fun processString(p: Properties, entry: Entry): Boolean {
-            val value = Utils.currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
+            val value = PropertyFileUtils.currentValue(p.getProperty(entry.key), entry.value, entry.default, entry.operation)
 
             if (entry.operation == Operations.SET) {
                 p.setProperty(entry.key, value)
