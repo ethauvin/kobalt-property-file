@@ -22,18 +22,18 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="Kobalt: org.jetbrains:annotations:jar:13.0">
+      <library name="Kobalt: org.jetbrains.kotlin:kotlin-stdlib:jar:1.1.2-4">
         <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/cache/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
+          <root url="jar://$USER_HOME$/.kobalt/cache/org/jetbrains/kotlin/kotlin-stdlib/1.1.2-4/kotlin-stdlib-1.1.2-4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
-      <library name="Kobalt: org.jetbrains.kotlin:kotlin-stdlib:jar:1.1.2-4">
+    <orderEntry type="module-library" scope="TEST">
+      <library name="Kobalt: com.beust:jcommander:jar:1.64">
         <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/cache/org/jetbrains/kotlin/kotlin-stdlib/1.1.2-4/kotlin-stdlib-1.1.2-4.jar!/" />
+          <root url="jar://$USER_HOME$/.kobalt/cache/com/beust/jcommander/1.64/jcommander-1.64.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -48,10 +48,10 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" scope="TEST">
-      <library name="Kobalt: com.beust:jcommander:jar:1.64">
+    <orderEntry type="module-library">
+      <library name="Kobalt: org.jetbrains:annotations:jar:13.0">
         <CLASSES>
-          <root url="jar://$USER_HOME$/.kobalt/cache/com/beust/jcommander/1.64/jcommander-1.64.jar!/" />
+          <root url="jar://$USER_HOME$/.kobalt/cache/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

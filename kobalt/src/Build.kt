@@ -46,11 +46,11 @@ val p = project {
 
     dependencies {
         compileOnly("com.beust:$kobaltDependency:")
-        compile("org.jetbrains.kotlin:kotlin-stdlib:1.1.2-4")
+        compile("org.jetbrains.kotlin:kotlin-stdlib:1.1.51")
     }
 
     dependenciesTest {
-        compile("org.testng:testng:6.11")
+        compile("org.testng:testng:6.12")
     }
 
     assemble {
