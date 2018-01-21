@@ -5,7 +5,6 @@ import com.beust.kobalt.plugin.publish.autoGitTag
 import com.beust.kobalt.plugin.publish.bintray
 import com.beust.kobalt.profile
 import com.beust.kobalt.project
-import net.thauvin.erik.kobalt.plugin.versioneye.versionEye
 import org.apache.maven.model.Developer
 import org.apache.maven.model.License
 import org.apache.maven.model.Model
@@ -13,7 +12,7 @@ import org.apache.maven.model.Scm
 
 val bs = buildScript {
     repos(localMaven())
-    plugins("net.thauvin.erik:kobalt-versioneye:", "net.thauvin.erik:kobalt-maven-local:")
+    plugins("net.thauvin.erik:kobalt-maven-local:")
 }
 
 val dev by profile()
@@ -73,10 +72,5 @@ val p = project {
         publish = true
         description = "Release version $version"
         vcsTag = version
-    }
-
-    versionEye {
-        org = "Thauvin"
-        team = "Owners"
     }
 }
