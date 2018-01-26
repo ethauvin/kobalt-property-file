@@ -49,7 +49,7 @@ val p = project {
     }
 
     dependenciesTest {
-        compile("org.testng:testng:6.13.0")
+        compile("org.testng:testng:6.13.1")
     }
 
     assemble {
